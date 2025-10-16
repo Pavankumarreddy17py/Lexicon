@@ -1,0 +1,185 @@
+/* body {
+    font-family: 'Arial', sans-serif;
+    background-color: #0767c8;
+}
+
+h1 {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+}
+
+.card {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#ask-btn {
+    transition: 0.3s;
+}
+
+#ask-btn:hover {
+    background-color: #28a745;
+    transform: scale(1.05);
+}
+
+#answer {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+} */
+
+body {
+    font-family: 'Arial', sans-serif;
+    /* This color is the solid fallback */
+    background-color: #0a0e26;
+    /* This is the linear gradient 'image' */
+    background-image: linear-gradient(135deg, #2c004a 0%, #001f3f 100%);
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    transition: background-color 0.5s ease;
+}
+/* Contextual background classes */
+body.document-search {
+    background-image: linear-gradient(135deg, #0767c8 0%, #0288d1 100%), 
+                      url('images/background_image.jpg');
+    background-blend-mode: overlay;
+}
+
+body.results-view {
+    background-image: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+}
+
+body.document-view {
+    background-image: linear-gradient(135deg, #607D8B 0%, #455A64 100%);
+}
+
+h1 {
+    font-size: 28px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    animation: fadeInDown 0.6s ease-out;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    animation: fadeIn 0.8s ease-out;
+}
+
+.card {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.15);
+    background-color: rgba(255, 255, 255, 0.95);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+#ask-btn {
+    transition: all 0.3s;
+    background-color: #2196F3;
+    border: none;
+    padding: 12px 24px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+#ask-btn:hover {
+    background-color: #28a745;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+#answer {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+/* Document preview styles */
+.document-preview {
+    border-left: 4px solid #2196F3;
+    padding: 15px;
+    margin: 15px 0;
+    background-color: #f8f9fa;
+    border-radius: 0 8px 8px 0;
+    transition: all 0.3s ease;
+}
+
+.document-preview:hover {
+    background-color: #e9f5ff;
+    transform: translateX(5px);
+}
+
+/* Loading animation */
+.loading-animation {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+}
+
+/* Keyframe animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    h1 {
+        font-size: 24px;
+    }
+    
+    .card {
+        border-radius: 8px;
+    }
+}
+

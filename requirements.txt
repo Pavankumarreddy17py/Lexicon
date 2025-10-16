@@ -1,0 +1,16 @@
+flask
+flask_uploads
+pypdf2
+faiss-cpu
+nltk
+werkzeug
+scikit-learn
+regex
+sentence-transformers
+numpy
+torch
+openai
+transformers
+accelerate
+huggingface_hub
+python-docx
