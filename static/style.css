@@ -1,55 +1,24 @@
-/* body {
-    font-family: 'Arial', sans-serif;
-    background-color: #0767c8;
-}
-
-h1 {
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.container {
-    max-width: 600px;
-    margin: auto;
-}
-
-.card {
-    border-radius: 12px;
-    border: none;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-#ask-btn {
-    transition: 0.3s;
-}
-
-#ask-btn:hover {
-    background-color: #28a745;
-    transform: scale(1.05);
-}
-
-#answer {
-    font-size: 18px;
-    font-weight: bold;
-    color: #333;
-} */
+/* ===================================================
+   GLOBAL & BACKGROUND STYLES
+   =================================================== */
 
 body {
     font-family: 'Arial', sans-serif;
-    /* This color is the solid fallback */
+    /* Solid fallback color - a deep, non-distracting dark blue */
     background-color: #0a0e26;
-    /* This is the linear gradient 'image' */
-    background-image: linear-gradient(135deg, #2c004a 0%, #001f3f 100%);
+    /* Primary dynamic linear gradient for a modern, deep look */
+    background-image: linear-gradient(135deg, #1f0037 0%, #001f3f 100%);
     min-height: 100vh;
     margin: 0;
     padding: 20px;
     transition: background-color 0.5s ease;
+    /* Ensure text is readable against the dark background */
+    color: #f0f0f0; 
 }
-/* Contextual background classes */
+
+/* Contextual background classes (Keeping your dynamic themes) */
 body.document-search {
-    background-image: linear-gradient(135deg, #0767c8 0%, #0288d1 100%), 
-                      url('images/background_image.jpg');
-    background-blend-mode: overlay;
+    background-image: linear-gradient(135deg, #0767c8 0%, #0288d1 100%);
 }
 
 body.results-view {
@@ -61,11 +30,12 @@ body.document-view {
 }
 
 h1 {
-    font-size: 28px;
+    font-size: 32px; /* Slightly larger title */
     font-weight: bold;
     color: white;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5); /* Stronger shadow */
     animation: fadeInDown 0.6s ease-out;
+    margin-bottom: 30px;
 }
 
 .container {
@@ -74,58 +44,86 @@ h1 {
     animation: fadeIn 0.8s ease-out;
 }
 
+/* ===================================================
+   CARD STYLES (Glassmorphism)
+   =================================================== */
+
 .card {
-    border-radius: 12px;
-    border: none;
-    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.15);
-    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 16px; /* Slightly larger radius */
+    border: 1px solid rgba(255, 255, 255, 0.18); /* Light border for definition */
+    
+    /* The key to Glassmorphism: semi-transparent white background */
+    background: rgba(255, 255, 255, 0.05);
+    
+    /* Frosted Glass Effect */
+    backdrop-filter: blur(10px); 
+    -webkit-backdrop-filter: blur(10px);
+    
+    box-shadow: 0px 8px 32px 0 rgba(0, 0, 0, 0.3); /* Stronger 3D shadow */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     overflow: hidden;
+    color: #f0f0f0; /* Ensure card text is light */
 }
 
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.2);
+    transform: translateY(-8px); /* Deeper lift on hover */
+    box-shadow: 0px 12px 40px rgba(0, 0, 0, 0.4);
 }
+
+/* ===================================================
+   BUTTON & ANSWER STYLES
+   =================================================== */
 
 #ask-btn {
     transition: all 0.3s;
     background-color: #2196F3;
+    /* New vibrant blue gradient for better pop */
+    background-image: linear-gradient(45deg, #2196F3, #0288d1);
     border: none;
     padding: 12px 24px;
     font-weight: bold;
     letter-spacing: 0.5px;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
 }
 
 #ask-btn:hover {
+    /* Keep the powerful hover effect */
     background-color: #28a745;
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    background-image: linear-gradient(45deg, #28a745, #388e3c);
+    transform: scale(1.03); /* Reduce scale for smoother feel */
+    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
 }
 
 #answer {
     font-size: 18px;
     font-weight: bold;
-    color: #333;
+    color: #e0e0e0; /* Light text for answer against the dark card */
     animation: fadeInUp 0.5s ease-out;
+    padding: 10px;
 }
 
-/* Document preview styles */
+/* Document preview styles (Ensure dark text works on light background) */
 .document-preview {
     border-left: 4px solid #2196F3;
     padding: 15px;
     margin: 15px 0;
-    background-color: #f8f9fa;
+    /* Use a slightly darker background for better contrast inside the card */
+    background-color: rgba(255, 255, 255, 0.1); 
+    color: #f0f0f0;
     border-radius: 0 8px 8px 0;
     transition: all 0.3s ease;
 }
 
 .document-preview:hover {
-    background-color: #e9f5ff;
+    background-color: rgba(255, 255, 255, 0.2);
     transform: translateX(5px);
 }
 
-/* Loading animation */
+/* ===================================================
+   ANIMATIONS (Unchanged)
+   =================================================== */
 .loading-animation {
     display: inline-block;
     width: 40px;
@@ -136,7 +134,6 @@ h1 {
     animation: spin 1s ease-in-out infinite;
 }
 
-/* Keyframe animations */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -168,7 +165,10 @@ h1 {
     to { transform: rotate(360deg); }
 }
 
-/* Responsive design */
+/* ===================================================
+   RESPONSIVE DESIGN (Unchanged)
+   =================================================== */
+
 @media (max-width: 768px) {
     .container {
         padding: 0 15px;
@@ -179,7 +179,6 @@ h1 {
     }
     
     .card {
-        border-radius: 8px;
+        border-radius: 12px;
     }
 }
-

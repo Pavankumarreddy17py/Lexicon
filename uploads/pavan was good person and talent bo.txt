@@ -1,4 +1,0 @@
-name : pavan kumar reddy
-branch : computer science
-college : korm college of eng
-roll no : 21bc1a0562

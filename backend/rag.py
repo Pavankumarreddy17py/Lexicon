@@ -26,43 +26,50 @@ class RAGModel:
         self.documents = {}
         self.embedding_model = EmbeddingModel()
         self.index = None
-        self.sentences = []
+        self.all_sentences = [] # Stores all sentences for all documents
 
     def add_document(self, doc_name, text):
-        """Processes a document and stores its text embeddings."""
+        """Processes a document and incrementally updates the index."""
         self.documents[doc_name] = text
-        self.sentences = self.split_text(text)
-        self._update_index()
+        new_sentences = self.split_text(text)
+        
+        # 1. Update the master list of all sentences
+        self.all_sentences.extend(new_sentences)
+        
+        # 2. Add embeddings for ONLY the new sentences (Incremental FAISS add)
+        self._add_embeddings(new_sentences)
 
     def split_text(self, text):
         """Splits text into small, meaningful sections for better retrieval."""
         return re.split(r'(?<=\.)\s+', text)  # Splits sentences properly
 
-    def _update_index(self):
-        """Creates a FAISS index from text embeddings using batch encoding."""
-        if not self.sentences:
-            self.index = None
+    def _add_embeddings(self, sentences_to_embed):
+        """Helper to generate embeddings and add them incrementally to FAISS."""
+        if not sentences_to_embed:
             return
-        
-        # *** OPTIMIZATION: Use the model's batch encoding function directly ***
-        # This is significantly faster than calling get_embedding(sentence) in a loop
-        embeddings = self.embedding_model.model.encode(
-            self.sentences,
+
+        # 1. Generate embeddings for the new sentences using batch encoding
+        new_embeddings = self.embedding_model.model.encode(
+            sentences_to_embed,
             convert_to_numpy=True,
-            show_progress_bar=False,  # Keep console clean during upload
-            normalize_embeddings=True # Normalizing is good practice for vector search
+            show_progress_bar=False,
+            normalize_embeddings=True
         )
         
-        if embeddings.ndim == 1:
-            embeddings = np.array([embeddings])
+        if new_embeddings.ndim == 1:
+            new_embeddings = np.array([new_embeddings])
 
-        self.index = faiss.IndexFlatL2(embeddings.shape[1])
-        self.index.add(embeddings)
+        # 2. Initialize index if it doesn't exist
+        if self.index is None:
+            self.index = faiss.IndexFlatL2(new_embeddings.shape[1])
+            
+        # 3. Add embeddings incrementally (FASTER than rebuilding)
+        self.index.add(new_embeddings)
+
+    # NOTE: The old _update_index method is removed as it's no longer necessary.
 
     def rerank_results(self, question, retrieved_sentences):
         """Uses cosine similarity on existing embeddings (for speed) to pick the most relevant sentence."""
-        # This function relies on embedding generation for each check, which can still be a bottleneck.
-        # However, since it only runs on 10 or fewer sentences, the impact is less severe than the full index build.
         question_embedding = self.embedding_model.get_embedding(question)
         
         # Batch encode the retrieved sentences for faster similarity calculation
@@ -77,6 +84,7 @@ class RAGModel:
         best_match_idx = np.argmax(similarities)
         
         return retrieved_sentences[best_match_idx]
+    
     def clean_answer(self, text):
         """Removes unnecessary formatting from the final answer."""
         text = re.sub(r'\s+', ' ', text)  # Normalize spaces
@@ -98,36 +106,41 @@ class RAGModel:
 
     def answer_question(self, question):
         """Retrieves the best answer for the given question and provides better context."""
-        if not self.index or not self.sentences:
+        # FIXED: Check against self.all_sentences
+        if not self.index or not self.all_sentences:
             return "No documents uploaded yet."
 
         # 1. Get the vector embedding for the question
         question_vec = self.embedding_model.get_embedding(question).reshape(1, -1)
         
         # 2. Retrieve a larger pool of candidates (top 10)
-        # We search a larger pool to give the reranker better options
-        k = min(10, len(self.sentences)) # Ensure k is not larger than the number of sentences
+        # FIXED: Use self.all_sentences for length check
+        k = min(10, len(self.all_sentences)) # Ensure k is not larger than the number of sentences
         _, I = self.index.search(question_vec, k=k)
         
         candidate_indices = I[0]
-        candidate_sentences = [self.sentences[idx] for idx in candidate_indices]
+        # FIXED: Use self.all_sentences for retrieving candidates
+        candidate_sentences = [self.all_sentences[idx] for idx in candidate_indices]
 
         # 3. Use the defined re-ranker to pick the single most relevant sentence from the candidates
         best_sentence = self.rerank_results(question, candidate_sentences)
 
         # 4. Find the index of the best sentence in the full sentence list to get its neighbors
         try:
-            best_idx = self.sentences.index(best_sentence)
+            # FIXED: Use self.all_sentences to find the index
+            best_idx = self.all_sentences.index(best_sentence)
         except ValueError:
             # Fallback if the sentence isn't found (shouldn't happen)
             return self.generate_llm_answer(question, best_sentence)
 
         # 5. Collect the best sentence and its immediate neighbors for a focused context
         start_idx = max(0, best_idx - 1)
-        end_idx = min(len(self.sentences), best_idx + 2) # +2 to include the best and the next sentence
+        # FIXED: Use self.all_sentences for length check
+        end_idx = min(len(self.all_sentences), best_idx + 2) # +2 to include the best and the next sentence
         
         # Create a list of 1-3 highly focused sentences
-        focused_context = [self.sentences[i] for i in range(start_idx, end_idx)]
+        # FIXED: Use self.all_sentences to construct the focused context
+        focused_context = [self.all_sentences[i] for i in range(start_idx, end_idx)]
         
         full_context = " ".join(focused_context) # Combine the best sentences
 
